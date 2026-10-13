@@ -1,0 +1,62 @@
+{
+    "name": "DLSDK Qt Dev Container",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    // Make it possible to run GUI applications from the container
+    "containerEnv": {
+        "XDG_RUNTIME_DIR": "/tmp",
+        "DISPLAY": "${localEnv:DISPLAY}",
+        "WAYLAND_DISPLAY": "${localEnv:WAYLAND_DISPLAY}",
+        "XAUTHORITY": "${localEnv:XAUTHORITY}"
+    },
+    // Share host's network stack and add root group to allow access to USB devices
+    "runArgs": [
+        "--network=host",
+        "--group-add=0"
+    ],
+    "remoteUser": "vscode",
+    "privileged": true,
+    "workspaceMount": "source=${localWorkspaceFolder}/..,target=/workspaces,type=bind,consistency=cached",
+    "mounts": [
+        "source=/dev/bus/usb,target=/dev/bus/usb,type=bind",
+        "source=/dev/input,target=/dev/input,type=bind",
+        "source=/run/udev/control,target=/run/udev/control,type=bind",
+        "source=/run/udev,target=/run/udev,type=bind,readonly",
+        "source=${localEnv:XDG_RUNTIME_DIR}/${localEnv:WAYLAND_DISPLAY},target=/tmp/${localEnv:WAYLAND_DISPLAY},type=bind,consistency=cached",
+        "source=${localEnv:XAUTHORITY},target=${localEnv:XAUTHORITY},type=bind,consistency=cached",
+        // While VS Code does pass the SSH_AUTH_SOCK to the container automagically, commit signing is not able to use
+        // it, instead relying on a path specified in git config. So we have to mount ~/.ssh directory anyway to make
+        // commit signing work.
+        "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+    ],
+    // Additional features to add to the container. See https://containers.dev/features 
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "installZsh": "false",
+            "upgradePackages": "false",
+            "username": "vscode",
+            "userUid": "automatic",
+            "userGid": "automatic"
+        },
+        "ghcr.io/rocker-org/devcontainer-features/apt-packages:1": {
+            "packages": "gdb, tig, vim, usbutils, clangd, clang-format"
+        }
+    },
+    // VS Code extensions and settings to apply in the container.
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+                "ms-vscode.cpp-devtools",
+                "ms-vscode.cmake-tools",
+                "llvm-vs-code-extensions.vscode-clangd"
+            ],
+            "settings": {
+                "clangd.path": "clangd",
+                "C_Cpp.intelliSenseEngine": "disabled"
+            }
+        }
+    },
+    "postCreateCommand": "bash .devcontainer/setup.sh"
+}

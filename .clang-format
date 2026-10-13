@@ -1,0 +1,65 @@
+---
+Language: Cpp
+Standard: c++20
+BasedOnStyle: LLVM
+
+# General
+UseTab: Never
+ColumnLimit: 120
+PointerAlignment: Left
+AccessModifierOffset: -4
+SeparateDefinitionBlocks: Always
+
+# Indentation
+IndentWidth: 4
+IndentCaseLabels: false
+NamespaceIndentation: None
+ContinuationIndentWidth: 4
+ConstructorInitializerIndentWidth: 4
+IndentPPDirectives: BeforeHash
+
+# Braces
+BreakBeforeBraces: Allman
+AllowShortLambdasOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+
+# Constructor initializers
+BreakConstructorInitializers: BeforeComma
+PackConstructorInitializers: Never
+
+# Functions, arguments, etc.
+AlignAfterOpenBracket: BlockIndent
+BinPackParameters: false
+BinPackArguments: false
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+
+# Spacing
+SpaceBeforeParens: ControlStatements
+
+# Includes
+IncludeBlocks: Regroup
+SortIncludes: CaseSensitive
+IncludeCategories:
+    # Qt headers
+  - Regex:           '^<(Q|qpa/)'
+    Priority:        1
+    CaseSensitive:   true
+
+    # C++ standard library headers
+  - Regex:           '^<[a-zA-Z0-9_]+>$'
+    Priority:        2
+    CaseSensitive:   true
+
+    # Other headers in angle brackets with extensions
+  - Regex:           '^<.*>'
+    Priority:        3
+    CaseSensitive:   true
+
+    # Local headers in double quotes
+  - Regex:           '^"".*"'
+    Priority:        4
+    CaseSensitive:   true
+
+...
